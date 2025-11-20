@@ -58,7 +58,45 @@
 
 #### Решение "Создание облачной инфраструктуры"
 
+1. Сервисный аккаунт
 
+- Создаем сервисный аккаунт из папки [**service-account**](https://github.com/Liberaty/diplom/blob/main/service-account) с правами editor. Для дальнейшей работы из под этого сервисного аккаунта понадобятся его id и ключ, их выводим в output как sensitive данные, которые можно будет затем увидеть командами ```terraform output -json service_account_keys | jq -r '.access_key'``` и ```terraform output -json service_account_keys | jq -r '.secret_key'``` . Они нам понадобятся в дальнейшем в terraform.tfvars файле и в backend.hcl
+
+![1.1.png](https://github.com/Liberaty/diplom/blob/main/img/1.1.png?raw=true)
+
+- Убедимся, что сервисный аккаунт создан
+
+![1.2.png](https://github.com/Liberaty/diplom/blob/main/img/1.2.png?raw=true)
+
+2. S3 хранилище
+
+- Создаём папку [**backend**](https://github.com/Liberaty/diplom/blob/main/backend), где в terraform.tfvars добавляем полученные ранее id и ключ при создании сервисного аккаунта (пример в [**terraform.tfvars.example**](https://github.com/Liberaty/diplom/blob/main/backend/terraform.tfvars.example)). В [**bucket.tf**](https://github.com/Liberaty/diplom/blob/main/backend/bucket.tf) создаем s3-bucket с именем **lepishin-tfstate** и добавляем на него права доступа явно для сервис аккаунта **terraform**
+
+![1.3.png](https://github.com/Liberaty/diplom/blob/main/img/1.3.png?raw=true)
+
+- Так же убедимся, что S3 создан
+
+![1.4.png](https://github.com/Liberaty/diplom/blob/main/img/1.4.png?raw=true)
+
+3. Backend
+
+- Подготавливаем папку [**infrastructure**](https://github.com/Liberaty/diplom/blob/main/infrastructure), где в [**providers.tf**](https://github.com/Liberaty/diplom/blob/main/infrastructure/providers.tf) описываем ранее созданный бакет как бекенд для хранения стейт файла **terraform.tfstate**. Так как мы не можем использовать переменные в блоке backend "s3", то запишем значения ключей в файл **backend.hcl** (пример в [**backend.hcl.example**](https://github.com/Liberaty/diplom/blob/main/infrastructure/backend.hcl.example)), и запустим инициализацию с ключом ```terraform init -backend-config=backend.hcl``` 
+
+![1.5.png](https://github.com/Liberaty/diplom/blob/main/img/1.5.png?raw=true)
+
+- После применения убедимся, что файл terraform.tfstate создался в нашем бакете
+
+![1.6.png](https://github.com/Liberaty/diplom/blob/main/img/1.6.png?raw=true)
+
+4. VPC
+
+- В файле [**vpc.tf**](https://github.com/Liberaty/diplom/blob/main/infrastructure/vpc.tf) описываем создание VPC с подсетями в разных зонах доступности (ru-central1-a,ru-central1-b,ru-central1-d) и теперь применим
+
+![1.7.png](https://github.com/Liberaty/diplom/blob/main/img/1.7.png?raw=true)
+
+- Видим, что сети созданы в различных зонах:
+
+![1.8.png](https://github.com/Liberaty/diplom/blob/main/img/1.8.png?raw=true)
 
 ---
 ### Создание Kubernetes кластера
