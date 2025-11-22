@@ -123,11 +123,13 @@
 
 1. VM для k8s
 
-- Описываем в [**k8s-workers.tf**](https://github.com/Liberaty/diplom/blob/main/infrastructure/k8s-workers.tf) и в [**k8s-masters.tf**](https://github.com/Liberaty/diplom/blob/main/infrastructure/k8s-masters.tf) создание виртуальных машин для master и worker нод, размещенных в ранее созданных **k8s_subnets**
+- Описываем в [**k8s-workers.tf**](https://github.com/Liberaty/diplom/blob/main/infrastructure/k8s-workers.tf) и в [**k8s-masters.tf**](https://github.com/Liberaty/diplom/blob/main/infrastructure/k8s-masters.tf) создание виртуальных машин для master и worker нод, размещенных в ранее созданных подсетях, далее применяем
 
 ![2.1.png](https://github.com/Liberaty/diplom/blob/main/img/2.1.png?raw=true)
 
 - так же были созданы файлы [**ansible.tf**](https://github.com/Liberaty/diplom/blob/main/infrastructure/ansible.tf) и шаблон [**inventory.tftpl**](https://github.com/Liberaty/diplom/blob/main/infrastructure/templates/inventory.tftpl) для автоматической генерации [**inventory.yml**](https://github.com/Liberaty/diplom/blob/main/ansible/inventory/inventory.yml) при изменении IP адресов VM
+
+![2.2.png](https://github.com/Liberaty/diplom/blob/main/img/2.2.png?raw=true)
 
 2. 
 
