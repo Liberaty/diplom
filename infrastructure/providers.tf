@@ -4,8 +4,6 @@ terraform {
     bucket     = "lepishin-tfstate"
     key        = "terraform.tfstate"
     region     = "ru-central1"
-    access_key = var.access_key
-    secret_key = var.secret_key
     skip_region_validation      = true
     skip_credentials_validation = true
     skip_requesting_account_id  = true
@@ -25,4 +23,8 @@ provider "yandex" {
   folder_id = var.folder_id
   zone      = var.default_zone
   service_account_key_file = file("~/.authorized_key.json")
+}
+
+data "yandex_compute_image" "ubuntu" {
+  family = var.vm_web_family
 }
