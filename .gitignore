@@ -51,8 +51,9 @@ authorized_key.json
 # Own secret vars store.
 personal.auto.tfvars
 
-# Test files
+# Ansible files
 playbook/test.yml
+ansible/kubespray/ansible.cfg
 
 # SSH keys
 *.key

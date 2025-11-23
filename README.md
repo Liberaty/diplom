@@ -137,7 +137,7 @@
 
 - После скопируем папку `cp -rfp inventory/sample inventory/mycluster` и применим ```terraform apply```, чтобы заменился **/inventory/mycluster/inventory.ini**, в **inventory/mycluster/group_vars/all/all.yml** добавим версию `kube_version: 1.31.0`, а в **inventory/mycluster/group_vars/k8s_cluster/k8s-cluster.yml** добавим `supplementary_addresses_in_ssl_keys:`, который будет содержать значение внешнего IP-адреса мастера в сертификате.
 
-- Так же в **ansible.cfg** добавил свои значения `private_key_file = ~/.ssh/id_ed25519` и `remote_user = cloud-user`, иначе playbook будет устанавливаться от текущего пользователя.
+- Так же в **kubspray/ansible.cfg** добавил свои значения `private_key_file = ~/.ssh/id_ed25519` и `remote_user = cloud-user`, иначе playbook будет устанавливаться от текущего пользователя.
 
 3. Установка k8s завершена
 
