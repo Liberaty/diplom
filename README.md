@@ -131,15 +131,23 @@
 
 ![2.2.png](https://github.com/Liberaty/diplom/blob/main/img/2.2.png?raw=true)
 
-2. Воспользуемся Kubespray для деплоя кластера k8s. Для этого склонируем его репозиторий ```git submodule add -b v2.28.0 https://github.com/kubernetes-sigs/kubespray.git```, перейдем в скачанную папку ```cd kubespray```, включим виртуальное окружение ```source .venv/bin/activate``` и установим необходимые зависимости `pip install -r requirements.txt`.  
-   После скопируем папку `cp -rfp inventory/sample inventory/mycluster` и применим ```terraform apply```, чтобы заменился **/inventory/mycluster/inventory.ini**, в **inventory/mycluster/group_vars/all/all.yml** добавим версию `kube_version: 1.31.0`, а в **inventory/mycluster/group_vars/k8s_cluster/k8s-cluster.yml** добавим `supplementary_addresses_in_ssl_keys:`, который будет содержать значение внешнего IP-адреса мастера в сертификате.
-   Так же в **ansible.cfg** добавил свои значения `private_key_file = ~/.ssh/id_ed25519` и `remote_user = cloud-user`, иначе playbook будет устанавливаться от текущего пользователя.
+2. Подготовка к установке k8s через Kubespray
 
-3. После запуска `ansible-playbook -i inventory/mycluster/inventory.ini cluster.yml -b -v` получаем успешный результат:
+- Воспользуемся Kubespray для деплоя кластера k8s. Для этого склонируем его репозиторий ```git submodule add -b v2.28.0 https://github.com/kubernetes-sigs/kubespray.git```, перейдем в скачанную папку ```cd kubespray```, включим виртуальное окружение ```source .venv/bin/activate``` и установим необходимые зависимости `pip install -r requirements.txt`.
+
+- После скопируем папку `cp -rfp inventory/sample inventory/mycluster` и применим ```terraform apply```, чтобы заменился **/inventory/mycluster/inventory.ini**, в **inventory/mycluster/group_vars/all/all.yml** добавим версию `kube_version: 1.31.0`, а в **inventory/mycluster/group_vars/k8s_cluster/k8s-cluster.yml** добавим `supplementary_addresses_in_ssl_keys:`, который будет содержать значение внешнего IP-адреса мастера в сертификате.
+
+- Так же в **ansible.cfg** добавил свои значения `private_key_file = ~/.ssh/id_ed25519` и `remote_user = cloud-user`, иначе playbook будет устанавливаться от текущего пользователя.
+
+3. Установка k8s завершена
+
+- После запуска `ansible-playbook -i inventory/mycluster/inventory.ini cluster.yml -b -v` получаем успешный результат:
 
 ![2.3.png](https://github.com/Liberaty/diplom/blob/main/img/2.3.png?raw=true)
 
-4. Забираем файл конфигурации с сервера для подключения к кластеру `ssh cloud-user@158.160.58.191 "sudo cat /etc/kubernetes/admin.conf" > ~/.kube/config`, меняем внутри файла адрес сервера 127.0.0.1 на наш внешний ip мастера и даем на него права `chmod 600 ~/.kube/config`. После чего проверяем доступ командой `kubectl get pods -n kube-system`:
+4. Забираем `~/.kube/config` на локальную VM
+
+- Забираем файл конфигурации с сервера для подключения к кластеру `ssh cloud-user@158.160.58.191 "sudo cat /etc/kubernetes/admin.conf" > ~/.kube/config`, меняем внутри файла адрес сервера **127.0.0.1** на наш внешний IP мастера и даем на него права `chmod 600 ~/.kube/config`. После чего проверяем доступ командой `kubectl get pods -n kube-system`:
 
 ![2.4.png](https://github.com/Liberaty/diplom/blob/main/img/2.4.png?raw=true)
 
