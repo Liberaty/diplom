@@ -43,7 +43,7 @@ variable "ssh_pub_key" {
 variable "ansible_inventory_path" {
   description = "Путь к ansible inventory относительно каталога infrastructure"
   type        = string
-  default     = "../ansible/inventory/inventory.yml"
+  default     = "../ansible/kubespray/inventory/mycluster/inventory.ini"
 }
 
 variable "ycr_name" {

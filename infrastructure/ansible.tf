@@ -3,14 +3,16 @@ locals {
   masters_inventory = {
     for addr in yandex_compute_instance.masters :
     addr.name => {
-      public_ip = addr.network_interface[0].nat_ip_address
+      public_ip  = addr.network_interface[0].nat_ip_address
+      private_ip = addr.network_interface[0].ip_address
     }
   }
 
   workers_inventory = {
     for addr in yandex_compute_instance.workers :
     addr.name => {
-      public_ip = addr.network_interface[0].nat_ip_address
+      public_ip  = addr.network_interface[0].nat_ip_address
+      private_ip = addr.network_interface[0].ip_address
     }
   }
 }
