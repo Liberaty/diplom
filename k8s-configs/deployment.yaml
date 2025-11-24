@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: test-nginx
-        image: cr.yandex/crp965qskkbji5l34b00/test-nginx-app:1.29.3
+        image: cr.yandex/crpmfosr6bfe40c2vn2j/test-nginx-app:1.29.3
         ports:
         - containerPort: 80
         resources:

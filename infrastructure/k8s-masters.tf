@@ -23,7 +23,7 @@ resource "yandex_compute_instance" "masters" {
   }
 
   scheduling_policy {
-    preemptible = true
+    preemptible = false
   }
 
   network_interface {

@@ -171,7 +171,29 @@
 
 #### Решение "Создание тестового приложения"
 
+1. Yandex Container Registry
 
+- Создадим файл [**regestry.tf**](https://github.com/Liberaty/diplom/blob/main/infrastructure//regestry.tf), который создаст Yandex Container Registry.
+
+![3.1.png](https://github.com/Liberaty/diplom/blob/main/img/3.1.png?raw=true)
+
+2. Подготовка репозитория для тестового приложения
+
+- Создадим новый репозиторий [**test-app**](https://github.com/Liberaty/test-app), который наполним файлами [**Dockerfile**](https://github.com/Liberaty/test-app/blob/main/Dockerfile), [**index.html**](https://github.com/Liberaty/test-app/blob/main/index.html) и [**nginx.conf**](https://github.com/Liberaty/test-app/blob/main/nginx.conf)
+
+3. Docker-образ
+
+- Сначала соберем образ ```docker build -t cr.yandex/crpmfosr6bfe40c2vn2j/test-app:1.0.0 .``` и потом запушим его в наш regestry ```docker push cr.yandex/crpmfosr6bfe40c2vn2j/test-app:1.0.0```
+
+![3.2.png](https://github.com/Liberaty/diplom/blob/main/img/3.2.png?raw=true)
+
+4. Контейнер в YCR
+
+- Проверяем, что образ появился в нашем registry
+
+![3.3.png](https://github.com/Liberaty/diplom/blob/main/img/3.3.png?raw=true)
+
+![3.4.png](https://github.com/Liberaty/diplom/blob/main/img/3.4.png?raw=true)
 
 ---
 ### Подготовка cистемы мониторинга и деплой приложения
