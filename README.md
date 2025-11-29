@@ -173,17 +173,23 @@
 
 1. Yandex Container Registry
 
-- Создадим файл [**regestry.tf**](https://github.com/Liberaty/diplom/blob/main/infrastructure//regestry.tf), который создаст Yandex Container Registry.
+- Создадим файл [**registry.tf**](https://github.com/Liberaty/diplom/blob/main/infrastructure/regestry.tf), который создаст Yandex Container Registry.
 
 ![3.1.png](https://github.com/Liberaty/diplom/blob/main/img/3.1.png?raw=true)
 
 2. Подготовка репозитория для тестового приложения
 
-- Создадим новый репозиторий [**test-app**](https://github.com/Liberaty/test-app), который наполним файлами [**Dockerfile**](https://github.com/Liberaty/test-app/blob/main/Dockerfile), [**index.html**](https://github.com/Liberaty/test-app/blob/main/index.html) и [**nginx.conf**](https://github.com/Liberaty/test-app/blob/main/nginx.conf)
+- Создадим новый репозиторий [**test-app**](https://github.com/Liberaty/test-app), который наполним файлами:
+
+- 1. [**Dockerfile**](https://github.com/Liberaty/test-app/blob/main/Dockerfile)
+
+- 2. [**index.html**](https://github.com/Liberaty/test-app/blob/main/index.html)
+
+- 3. [**nginx.conf**](https://github.com/Liberaty/test-app/blob/main/nginx.conf)
 
 3. Docker-образ
 
-- Сначала соберем образ ```docker build -t cr.yandex/crpmfosr6bfe40c2vn2j/test-app:1.0.0 .``` и потом запушим его в наш regestry ```docker push cr.yandex/crpmfosr6bfe40c2vn2j/test-app:1.0.0```
+- Сначала соберем образ ```docker build -t cr.yandex/crpmfosr6bfe40c2vn2j/test-app:1.0.0 .``` и потом запушим его в наш **registry** ```docker push cr.yandex/crpmfosr6bfe40c2vn2j/test-app:1.0.0```
 
 ![3.2.png](https://github.com/Liberaty/diplom/blob/main/img/3.2.png?raw=true)
 
@@ -210,7 +216,61 @@
 
 #### Решние "Подготовка cистемы мониторинга и деплой приложения"
 
+1. Prometheus+Grafana
 
+- Добавим helm репозиторий `helm repo add prometheus-community https://prometheus-community.github.io/helm-charts`, и запустим установку командой `helm install kube-prometheus prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace`, в итоге получаем результат
+
+![4.1.png](https://github.com/Liberaty/diplom/blob/main/img/4.1.png?raw=true)
+
+- Проверяем, что все поды в namespace monitoring запущены командой `kubectl get pods -o wide -n monitoring` и видим, что всё ок
+
+![4.2.png](https://github.com/Liberaty/diplom/blob/main/img/4.2.png?raw=true)
+
+2. Deploy приложения
+
+- Для деплоя нашего приложения, в папке [**k8s-configs**](https://github.com/Liberaty/diplom/blob/main/k8s-configs), создаём манифесты с помощью terraform, написав не хитрый файлик **k8s-create-configs.tf**(https://github.com/Liberaty/diplom/blob/main/infrastructure/k8s-create-configs.tf), который создаёт их по шаблонам из этой папки [**templates**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/templates):
+
+- 1. [**namespace.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/namespace.yaml)
+- 2. [**deployment.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/deployment.yaml)
+- 3. [**service.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/service.yaml) 
+
+![4.3.png](https://github.com/Liberaty/diplom/blob/main/img/4.3.png?raw=true)
+
+- Теперь применим эти манифесты и теперь видим что поды запущены
+
+![4.4.png](https://github.com/Liberaty/diplom/blob/main/img/4.4.png?raw=true)
+
+3. Настройка Ingress Controller
+
+- Для того, чтобы и grafana и наше приложение работали по одному и тому же 80 порту, я установил ingress-nginx контроллер из `helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx` и запустил со следующими параметрами `helm install my-nginx-ingress-controller ingress-nginx/ingress-nginx --namespace ingress-nginx --create-namespace --set controller.hostNetwork=true --set controller.service.enabled=false`.
+
+![4.5.png](https://github.com/Liberaty/diplom/blob/main/img/4.5.png?raw=true)
+
+- Далее написал [**app-ingress.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/app-ingress.yaml) и [**grafana-ingress.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/grafana-ingress.yaml) и применим их
+
+- После этого добавил в **configmap** код, указанный ниже, командой `kubectl -n monitoring edit cm kube-prometheus-grafana`:
+
+```
+[server]
+domain = 158.160.118.67
+root_url = http://158.160.118.67/monitor/
+serve_from_sub_path = true
+```
+
+Это нужно для корректной работы Grafana на subpath, далее перезапустил kube-prometheus-grafana командой `kubectl -n monitoring rollout restart deploy/kube-prometheus-grafana`
+
+- Убедимся, что по внешнему IP [**http://158.160.118.67/monitor**](http://158.160.118.67/monitor) открывается grafana
+
+- - логин: admin
+- - пароль: tower_watch
+
+Видим, что дашборды мониторинга с данными присутствуют
+
+![4.6.png](https://github.com/Liberaty/diplom/blob/main/img/4.7.png?raw=true)
+
+- А по адресу [**http://158.160.118.67**](http://158.160.118.67) откроется наша статичная страница с приложением
+
+![4.7.png](https://github.com/Liberaty/diplom/blob/main/img/4.8.png?raw=true)
 
 ### Деплой инфраструктуры в terraform pipeline
 

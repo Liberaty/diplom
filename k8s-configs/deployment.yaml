@@ -9,7 +9,7 @@ spec:
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 1
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: test-nginx
@@ -20,13 +20,6 @@ spec:
     spec:
       containers:
       - name: test-nginx
-        image: cr.yandex/crpmfosr6bfe40c2vn2j/test-nginx-app:1.29.3
+        image: cr.yandex/crpmfosr6bfe40c2vn2j/test-app:1.0.0
         ports:
         - containerPort: 80
-        resources:
-          requests:
-            memory: "64Mi"
-            cpu: "25m"
-          limits:
-            memory: "128Mi"
-            cpu: "100m"

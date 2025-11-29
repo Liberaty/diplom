@@ -23,10 +23,3 @@ spec:
         image: ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
         ports:
         - containerPort: 80
-        resources:
-          requests:
-            memory: "64Mi"
-            cpu: "25m"
-          limits:
-            memory: "128Mi"
-            cpu: "100m"
