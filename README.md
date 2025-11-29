@@ -266,7 +266,7 @@ serve_from_sub_path = true
 
 Видим, что дашборды мониторинга с данными присутствуют
 
-![4.6.png](https://github.com/Liberaty/diplom/blob/main/img/4.7.png?raw=true)
+![4.6.png](https://github.com/Liberaty/diplom/blob/main/img/4.6.png?raw=true)
 
 - А по адресу [**http://158.160.118.67**](http://158.160.118.67) откроется наша статичная страница с приложением
 
