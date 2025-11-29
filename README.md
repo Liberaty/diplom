@@ -270,7 +270,7 @@ serve_from_sub_path = true
 
 - А по адресу [**http://158.160.118.67**](http://158.160.118.67) откроется наша статичная страница с приложением
 
-![4.7.png](https://github.com/Liberaty/diplom/blob/main/img/4.8.png?raw=true)
+![4.7.png](https://github.com/Liberaty/diplom/blob/main/img/4.7.png?raw=true)
 
 ### Деплой инфраструктуры в terraform pipeline
 
