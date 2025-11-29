@@ -246,7 +246,7 @@
 
 ![4.5.png](https://github.com/Liberaty/diplom/blob/main/img/4.5.png?raw=true)
 
-- Далее написал [**app-ingress.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/app-ingress.yaml) и [**grafana-ingress.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/grafana-ingress.yaml) и применим их
+- Далее с помощью **Terraform** также создал [**app-ingress.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/app-ingress.yaml) и [**grafana-ingress.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/grafana-ingress.yaml) и применил их
 
 - После этого добавил в **configmap** код, указанный ниже, командой `kubectl -n monitoring edit cm kube-prometheus-grafana`:
 
