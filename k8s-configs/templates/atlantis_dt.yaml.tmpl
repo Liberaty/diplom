@@ -1,0 +1,115 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${APP_NAME}
+  namespace: ${NAMESPACE}
+  labels:
+    app: ${APP_NAME}
+spec:
+  replicas: ${REPLICA_COUNT}
+  selector:
+    matchLabels:
+      app: ${APP_NAME}
+  template:
+    metadata:
+      labels:
+        app: ${APP_NAME}
+    spec:
+      containers:
+      - name: ${APP_NAME}
+        image: ghcr.io/runatlantis/atlantis:v0.34.0
+        env:
+          - name: ATLANTIS_REPO_ALLOWLIST
+            valueFrom:
+              secretKeyRef:
+                name: ${APP_NAME}-secrets
+                key: repo-allowlist
+          - name: ATLANTIS_GH_USER
+            valueFrom:
+              secretKeyRef:
+                name: ${APP_NAME}-secrets
+                key: github-user
+          - name: ATLANTIS_GH_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: ${APP_NAME}-secrets
+                key: github-token
+          - name: ATLANTIS_GH_WEBHOOK_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: ${APP_NAME}-secrets
+                key: webhook-secret
+          - name: YC_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: ${APP_NAME}-secrets
+                key: yc-token
+          - name: YC_CLOUD_ID
+            valueFrom:
+              secretKeyRef:
+                name: ${APP_NAME}-secrets
+                key: yc-cloud-id
+          - name: YC_FOLDER_ID
+            valueFrom:
+              secretKeyRef:
+                name: ${APP_NAME}-secrets
+                key: yc-folder-id
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: ${APP_NAME}-secrets
+                key: s3-access-key
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: ${APP_NAME}-secrets
+                key: s3-secret-key
+          - name: AWS_REGION
+            value: "ru-central1"
+          - name: ATLANTIS_PORT
+            value: "4141"
+          - name: AWS_ENDPOINT
+            value: "storage.yandexcloud.net"
+          - name: AWS_EC2_METADATA_DISABLED
+            value: "true"
+          - name: TF_VAR_yc_token
+            valueFrom:
+              secretKeyRef:
+                name: ${APP_NAME}-secrets
+                key: yc-token
+          - name: TF_VAR_cloud_id
+            valueFrom:
+              secretKeyRef:
+                name: ${APP_NAME}-secrets
+                key: yc-cloud-id
+          - name: TF_VAR_folder_id
+            valueFrom:
+              secretKeyRef:
+                name: ${APP_NAME}-secrets
+                key: yc-folder-id
+          - name: TF_VAR_ssh_username
+            valueFrom:
+              secretKeyRef:
+                name: atlantis-secrets
+                key: ssh_username
+          - name: TF_VAR_ssh_pub_key
+            valueFrom:
+              secretKeyRef:
+                name: ${APP_NAME}-secrets
+                key: ssh-public-key
+
+        ports:
+        - name: http
+          containerPort: 4141
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+        volumeMounts:
+        - name: terraformrc
+          mountPath: /home/${APP_NAME}/.terraformrc
+          subPath: .terraformrc
+      volumes:
+      - name: terraformrc
+        configMap:
+          name: terraformrc

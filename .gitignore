@@ -50,6 +50,7 @@ terraform.rc
 authorized_key.json
 # Own secret vars store.
 personal.auto.tfvars
+secrets.yaml
 
 # Ansible files
 playbook/test.yml

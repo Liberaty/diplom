@@ -285,7 +285,38 @@ serve_from_sub_path = true
 
 #### Решение "Деплой инфраструктуры в terraform pipeline"
 
+1. Deploy Atlantis
 
+- Создаём манифесты с помощью terraform по шаблонам из папки [**templates**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/templates):
+
+- 1. [**atlantis_cm.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/atlantis/atlantis_cm.yaml)
+- 2. [**atlantis_dt.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/atlantis/atlantis_dt.yaml)
+- 3. [**atlantis_ns.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/atlantis/atlantis_ns.yaml)
+- 4. [**atlantis_svc.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/atlantis/atlantis_svc.yaml)
+
+- Также опишем необходимые переменные в [**secrets.yaml.example**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/atlantis/secrets.yaml.example)
+
+- Применяем командой `kubectl apply -f`
+
+2. Webhook's
+
+- Добавим webhook в настройках нашего репозитория, где укажем в url: http://158.160.118.67:32001/events
+
+![5.1.png](https://github.com/Liberaty/diplom/blob/main/img/5.1.png?raw=true)
+
+- Проверим, что тестовый push проходит успешно
+
+![5.2.png](https://github.com/Liberaty/diplom/blob/main/img/5.2.png?raw=true)
+
+3. Проверка Atlantis
+
+- Создаём в отдельной ветке тестовый файл test.tf с небольшими изменениями, пушим, создаём pull request и видим, что все проверки atlantis прошли успешно:
+
+![5.3.png](https://github.com/Liberaty/diplom/blob/main/img/5.3.png?raw=true)
+
+![5.4.png](https://github.com/Liberaty/diplom/blob/main/img/5.4.png?raw=true)
+
+![5.5.png](https://github.com/Liberaty/diplom/blob/main/img/5.5.png?raw=true)
 
 ---
 ### Установка и настройка CI/CD
