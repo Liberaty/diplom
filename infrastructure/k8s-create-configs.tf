@@ -68,3 +68,55 @@ resource "local_file" "grafana_ingress_rendered" {
   content  = data.template_file.grafana_ingress.rendered
   filename = "${path.module}/../k8s-configs/grafana-ingress.yaml"
 }
+
+data "template_file" "atlantis_ns" {
+  template = file("${path.module}/../k8s-configs/templates/atlantis_ns.yaml.tmpl")
+  vars = {
+    NAMESPACE      = "atlantis"
+    TAG            = "atlantis"
+  }
+}
+
+resource "local_file" "atlantis_ns_rendered" {
+  content  = data.template_file.atlantis_ns.rendered
+  filename = "${path.module}/../k8s-configs/atlantis/atlantis_ns.yaml"
+}
+
+data "template_file" "atlantis_cm" {
+  template = file("${path.module}/../k8s-configs/templates/atlantis_cm.yaml.tmpl")
+  vars = {
+    NAMESPACE      = "atlantis"
+  }
+}
+
+resource "local_file" "atlantis_cm_rendered" {
+  content  = data.template_file.atlantis_cm.rendered
+  filename = "${path.module}/../k8s-configs/atlantis/atlantis_cm.yaml"
+}
+
+data "template_file" "atlantis_svc" {
+  template = file("${path.module}/../k8s-configs/templates/atlantis_svc.yaml.tmpl")
+  vars = {
+    NAMESPACE      = "atlantis"
+    APP_NAME       = "atlantis"
+  }
+}
+
+resource "local_file" "atlantis_svc_rendered" {
+  content  = data.template_file.atlantis_svc.rendered
+  filename = "${path.module}/../k8s-configs/atlantis/atlantis_svc.yaml"
+}
+
+data "template_file" "atlantis_dt" {
+  template = file("${path.module}/../k8s-configs/templates/atlantis_dt.yaml.tmpl")
+  vars = {
+    NAMESPACE      = "atlantis"
+    APP_NAME       = "atlantis"
+    REPLICA_COUNT  = 1
+  }
+}
+
+resource "local_file" "atlantis_dt_rendered" {
+  content  = data.template_file.atlantis_dt.rendered
+  filename = "${path.module}/../k8s-configs/atlantis/atlantis_dt.yaml"
+}
