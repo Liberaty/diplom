@@ -302,21 +302,21 @@ serve_from_sub_path = true
 
 - Добавим webhook в настройках нашего репозитория, где укажем в url: http://158.160.118.67:32001/events
 
-![5.1.png](https://github.com/Liberaty/diplom/blob/main/img/5.1.png?raw=true)
+![5.1.png](https://github.com/Liberaty/diplom/blob/test-atlantis/img/5.1.png?raw=true)
 
 - Проверим, что тестовый push проходит успешно
 
-![5.2.png](https://github.com/Liberaty/diplom/blob/main/img/5.2.png?raw=true)
+![5.2.png](https://github.com/Liberaty/diplom/blob/test-atlantis/img/5.2.png?raw=true)
 
 3. Проверка Atlantis
 
 - Создаём в отдельной ветке тестовый файл test.tf с небольшими изменениями, пушим, создаём pull request и видим, что все проверки atlantis прошли успешно:
 
-![5.3.png](https://github.com/Liberaty/diplom/blob/main/img/5.3.png?raw=true)
+![5.3.png](https://github.com/Liberaty/diplom/blob/test-atlantis/img/5.3.png?raw=true)
 
-![5.4.png](https://github.com/Liberaty/diplom/blob/main/img/5.4.png?raw=true)
+![5.4.png](https://github.com/Liberaty/diplom/blob/test-atlantis/img/5.4.png?raw=true)
 
-![5.5.png](https://github.com/Liberaty/diplom/blob/main/img/5.5.png?raw=true)
+![5.5.png](https://github.com/Liberaty/diplom/blob/test-atlantis/img/5.5.png?raw=true)
 
 ---
 ### Установка и настройка CI/CD
