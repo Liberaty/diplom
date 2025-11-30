@@ -318,6 +318,8 @@ serve_from_sub_path = true
 
 ![5.5.png](https://github.com/Liberaty/diplom/blob/test-atlantis/img/5.5.png?raw=true)
 
+![5.6.png](https://github.com/Liberaty/diplom/blob/test-atlantis/img/5.6.png?raw=true)
+
 ---
 ### Установка и настройка CI/CD
 
