@@ -1,0 +1,4 @@
+cloud_id   = "your_cloud_id"
+folder_id  = "your_folder_id"
+ssh_username = "your_ssh_username"
+ssh_pub_key = "your_ssh_pub_key"
