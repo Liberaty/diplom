@@ -60,41 +60,41 @@
 
 1. Сервисный аккаунт
 
-- Создаем сервисный аккаунт [**sa-terraform.tf**](https://github.com/Liberaty/diplom/blob/main/service-accounts/sa-terraform.tf) с правами editor. Для дальнейшей работы из под этого сервисного аккаунта понадобятся его id и ключ, их выводим в output как sensitive данные, которые можно будет затем увидеть командами ```terraform output -json service_account_keys | jq -r '.access_key'``` и ```terraform output -json service_account_keys | jq -r '.secret_key'``` . Они нам понадобятся в дальнейшем в **terraform.tfvars** файле и в **backend.hcl**
+* Создаем сервисный аккаунт [**sa-terraform.tf**](https://github.com/Liberaty/diplom/blob/main/service-accounts/sa-terraform.tf) с правами editor. Для дальнейшей работы из под этого сервисного аккаунта понадобятся его id и ключ, их выводим в output как sensitive данные, которые можно будет затем увидеть командами ```terraform output -json service_account_keys | jq -r '.access_key'``` и ```terraform output -json service_account_keys | jq -r '.secret_key'``` . Они нам понадобятся в дальнейшем в **terraform.tfvars** файле и в **backend.hcl**
 
 ![1.1.png](https://github.com/Liberaty/diplom/blob/main/img/1.1.png?raw=true)
 
-- Убедимся, что сервисный аккаунт создан
+* Убедимся, что сервисный аккаунт создан
 
 ![1.2.png](https://github.com/Liberaty/diplom/blob/main/img/1.2.png?raw=true)
 
 2. S3 хранилище
 
-- Создаём папку [**backend**](https://github.com/Liberaty/diplom/blob/main/backend), где в terraform.tfvars добавляем полученные ранее id и ключ при создании сервисного аккаунта (пример в [**terraform.tfvars.example**](https://github.com/Liberaty/diplom/blob/main/backend/terraform.tfvars.example)). В [**bucket.tf**](https://github.com/Liberaty/diplom/blob/main/backend/bucket.tf) создаем s3-bucket с именем **lepishin-tfstate** и добавляем на него права доступа явно для сервис аккаунта **terraform**
+* Создаём папку [**backend**](https://github.com/Liberaty/diplom/blob/main/backend), где в terraform.tfvars добавляем полученные ранее id и ключ при создании сервисного аккаунта (пример в [**terraform.tfvars.example**](https://github.com/Liberaty/diplom/blob/main/backend/terraform.tfvars.example)). В [**bucket.tf**](https://github.com/Liberaty/diplom/blob/main/backend/bucket.tf) создаем s3-bucket с именем **lepishin-tfstate** и добавляем на него права доступа явно для сервис аккаунта **terraform**
 
 ![1.3.png](https://github.com/Liberaty/diplom/blob/main/img/1.3.png?raw=true)
 
-- Так же убедимся, что S3 создан
+* Так же убедимся, что S3 создан
 
 ![1.4.png](https://github.com/Liberaty/diplom/blob/main/img/1.4.png?raw=true)
 
 3. Backend
 
-- Подготавливаем директорию [**infrastructure**](https://github.com/Liberaty/diplom/blob/main/infrastructure), где в [**providers.tf**](https://github.com/Liberaty/diplom/blob/main/infrastructure/providers.tf) описываем ранее созданный бакет как бекенд для хранения стейт файла **terraform.tfstate**. Так как мы не можем использовать переменные в блоке backend "s3", то запишем значения ключей в файл **backend.hcl** (пример в [**backend.hcl.example**](https://github.com/Liberaty/diplom/blob/main/infrastructure/backend.hcl.example)), и запустим инициализацию с ключом ```terraform init -backend-config=backend.hcl``` 
+* Подготавливаем директорию [**infrastructure**](https://github.com/Liberaty/diplom/blob/main/infrastructure), где в [**providers.tf**](https://github.com/Liberaty/diplom/blob/main/infrastructure/providers.tf) описываем ранее созданный бакет как бекенд для хранения стейт файла **terraform.tfstate**. Так как мы не можем использовать переменные в блоке backend "s3", то запишем значения ключей в файл **backend.hcl** (пример в [**backend.hcl.example**](https://github.com/Liberaty/diplom/blob/main/infrastructure/backend.hcl.example)), и запустим инициализацию с ключом ```terraform init -backend-config=backend.hcl``` 
 
 ![1.5.png](https://github.com/Liberaty/diplom/blob/main/img/1.5.png?raw=true)
 
-- После применения убедимся, что файл terraform.tfstate создался в нашем бакете
+* После применения убедимся, что файл terraform.tfstate создался в нашем бакете
 
 ![1.6.png](https://github.com/Liberaty/diplom/blob/main/img/1.6.png?raw=true)
 
 4. VPC
 
-- В файле [**vpc.tf**](https://github.com/Liberaty/diplom/blob/main/infrastructure/vpc.tf) описываем создание VPC с подсетями в разных зонах доступности (ru-central1-a,ru-central1-b,ru-central1-d) и теперь применим
+* В файле [**vpc.tf**](https://github.com/Liberaty/diplom/blob/main/infrastructure/vpc.tf) описываем создание VPC с подсетями в разных зонах доступности (ru-central1-a,ru-central1-b,ru-central1-d) и теперь применим
 
 ![1.7.png](https://github.com/Liberaty/diplom/blob/main/img/1.7.png?raw=true)
 
-- Видим, что сети созданы в различных зонах:
+* Видим, что сети созданы в различных зонах:
 
 ![1.8.png](https://github.com/Liberaty/diplom/blob/main/img/1.8.png?raw=true)
 
@@ -123,31 +123,31 @@
 
 1. VM для k8s
 
-- Описываем в [**k8s-workers.tf**](https://github.com/Liberaty/diplom/blob/main/infrastructure/k8s-workers.tf) и в [**k8s-masters.tf**](https://github.com/Liberaty/diplom/blob/main/infrastructure/k8s-masters.tf) создание виртуальных машин для master и worker нод, размещенных в ранее созданных подсетях, далее применяем
+* Описываем в [**k8s-workers.tf**](https://github.com/Liberaty/diplom/blob/main/infrastructure/k8s-workers.tf) и в [**k8s-masters.tf**](https://github.com/Liberaty/diplom/blob/main/infrastructure/k8s-masters.tf) создание виртуальных машин для master и worker нод, размещенных в ранее созданных подсетях, далее применяем
 
 ![2.1.png](https://github.com/Liberaty/diplom/blob/main/img/2.1.png?raw=true)
 
-- так же были созданы файлы [**ansible.tf**](https://github.com/Liberaty/diplom/blob/main/infrastructure/ansible.tf) и шаблон [**inventory.tftpl**](https://github.com/Liberaty/diplom/blob/main/infrastructure/templates/inventory.tftpl) для автоматической генерации [**inventory.yml**](https://github.com/Liberaty/diplom/blob/main/ansible/inventory/inventory.yml) при изменении IP адресов VM по пути ```diplom/ansible/kubespray/inventory/mycluster/inventory.ini```
+* так же были созданы файлы [**ansible.tf**](https://github.com/Liberaty/diplom/blob/main/infrastructure/ansible.tf) и шаблон [**inventory.tftpl**](https://github.com/Liberaty/diplom/blob/main/infrastructure/templates/inventory.tftpl) для автоматической генерации [**inventory.yml**](https://github.com/Liberaty/diplom/blob/main/ansible/inventory/inventory.yml) при изменении IP адресов VM по пути ```diplom/ansible/kubespray/inventory/mycluster/inventory.ini```
 
 ![2.2.png](https://github.com/Liberaty/diplom/blob/main/img/2.2.png?raw=true)
 
 2. Подготовка к установке k8s через Kubespray
 
-- Воспользуемся Kubespray для деплоя кластера k8s. Для этого склонируем его репозиторий ```git submodule add -b v2.28.0 https://github.com/kubernetes-sigs/kubespray.git```, перейдем в скачанную папку ```cd kubespray```, включим виртуальное окружение ```source .venv/bin/activate``` и установим необходимые зависимости `pip install -r requirements.txt`.
+* Воспользуемся Kubespray для деплоя кластера k8s. Для этого склонируем его репозиторий ```git submodule add -b v2.28.0 https://github.com/kubernetes-sigs/kubespray.git```, перейдем в скачанную папку ```cd kubespray```, включим виртуальное окружение ```source .venv/bin/activate``` и установим необходимые зависимости `pip install -r requirements.txt`.
 
-- После скопируем папку `cp -rfp inventory/sample inventory/mycluster` и применим ```terraform apply```, чтобы заменился **/inventory/mycluster/inventory.ini**, в **inventory/mycluster/group_vars/all/all.yml** добавим версию `kube_version: 1.31.0`, а в **inventory/mycluster/group_vars/k8s_cluster/k8s-cluster.yml** добавим `supplementary_addresses_in_ssl_keys:`, который будет содержать значение внешнего IP-адреса мастера в сертификате.
+* После скопируем папку `cp -rfp inventory/sample inventory/mycluster` и применим ```terraform apply```, чтобы заменился **/inventory/mycluster/inventory.ini**, в **inventory/mycluster/group_vars/all/all.yml** добавим версию `kube_version: 1.31.0`, а в **inventory/mycluster/group_vars/k8s_cluster/k8s-cluster.yml** добавим `supplementary_addresses_in_ssl_keys:`, который будет содержать значение внешнего IP-адреса мастера в сертификате.
 
-- Так же в **kubspray/ansible.cfg** добавил свои значения `private_key_file = ~/.ssh/id_ed25519` и `remote_user = cloud-user`, иначе playbook будет устанавливаться от текущего пользователя.
+* Так же в **kubspray/ansible.cfg** добавил свои значения `private_key_file = ~/.ssh/id_ed25519` и `remote_user = cloud-user`, иначе playbook будет устанавливаться от текущего пользователя.
 
 3. Установка k8s завершена
 
-- После запуска `ansible-playbook -i inventory/mycluster/inventory.ini cluster.yml -b -v` получаем успешный результат:
+* После запуска `ansible-playbook -i inventory/mycluster/inventory.ini cluster.yml -b -v` получаем успешный результат:
 
 ![2.3.png](https://github.com/Liberaty/diplom/blob/main/img/2.3.png?raw=true)
 
 4. Забираем `~/.kube/config` на локальную VM
 
-- Забираем файл конфигурации с сервера для подключения к кластеру `ssh cloud-user@158.160.58.191 "sudo cat /etc/kubernetes/admin.conf" > ~/.kube/config`, меняем внутри файла адрес сервера **127.0.0.1** на наш внешний IP мастера и даем на него права `chmod 600 ~/.kube/config`. После чего проверяем доступ командой `kubectl get pods -n kube-system`:
+* Забираем файл конфигурации с сервера для подключения к кластеру `ssh cloud-user@158.160.58.191 "sudo cat /etc/kubernetes/admin.conf" > ~/.kube/config`, меняем внутри файла адрес сервера **127.0.0.1** на наш внешний IP мастера и даем на него права `chmod 600 ~/.kube/config`. После чего проверяем доступ командой `kubectl get pods -n kube-system`:
 
 ![2.4.png](https://github.com/Liberaty/diplom/blob/main/img/2.4.png?raw=true)
 
@@ -173,29 +173,29 @@
 
 1. Yandex Container Registry
 
-- Создадим файл [**registry.tf**](https://github.com/Liberaty/diplom/blob/main/infrastructure/regestry.tf), который создаст Yandex Container Registry.
+* Создадим файл [**registry.tf**](https://github.com/Liberaty/diplom/blob/main/infrastructure/regestry.tf), который создаст Yandex Container Registry.
 
 ![3.1.png](https://github.com/Liberaty/diplom/blob/main/img/3.1.png?raw=true)
 
 2. Подготовка репозитория для тестового приложения
 
-- Создадим новый репозиторий [**test-app**](https://github.com/Liberaty/test-app), который наполним файлами:
+* Создадим новый репозиторий [**test-app**](https://github.com/Liberaty/test-app), который наполним файлами:
 
-- - [**Dockerfile**](https://github.com/Liberaty/test-app/blob/main/Dockerfile)
+   * [**Dockerfile**](https://github.com/Liberaty/test-app/blob/main/Dockerfile)
 
-- - [**index.html**](https://github.com/Liberaty/test-app/blob/main/index.html)
+   * [**index.html**](https://github.com/Liberaty/test-app/blob/main/index.html)
 
-- - [**nginx.conf**](https://github.com/Liberaty/test-app/blob/main/nginx.conf)
+   * [**nginx.conf**](https://github.com/Liberaty/test-app/blob/main/nginx.conf)
 
 3. Docker-образ
 
-- Сначала соберем образ ```docker build -t cr.yandex/crpmfosr6bfe40c2vn2j/test-app:1.0.0 .``` и потом запушим его в наш **registry** ```docker push cr.yandex/crpmfosr6bfe40c2vn2j/test-app:1.0.0```
+* Сначала соберем образ ```docker build -t cr.yandex/crpmfosr6bfe40c2vn2j/test-app:1.0.0 .``` и потом запушим его в наш **registry** ```docker push cr.yandex/crpmfosr6bfe40c2vn2j/test-app:1.0.0```
 
 ![3.2.png](https://github.com/Liberaty/diplom/blob/main/img/3.2.png?raw=true)
 
 4. Контейнер в YCR
 
-- Проверяем, что образ появился в нашем registry
+* Проверяем, что образ появился в нашем registry
 
 ![3.3.png](https://github.com/Liberaty/diplom/blob/main/img/3.3.png?raw=true)
 
@@ -218,40 +218,40 @@
 
 1. Prometheus+Grafana
 
-- Добавим helm репозиторий `helm repo add prometheus-community https://prometheus-community.github.io/helm-charts`, и запустим установку командой `helm install kube-prometheus prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace`, в итоге получаем результат
+* Добавим helm репозиторий `helm repo add prometheus-community https://prometheus-community.github.io/helm-charts`, и запустим установку командой `helm install kube-prometheus prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace`, в итоге получаем результат
 
 ![4.1.png](https://github.com/Liberaty/diplom/blob/main/img/4.1.png?raw=true)
 
-- Проверяем, что все поды в namespace monitoring запущены командой `kubectl get pods -o wide -n monitoring` и видим, что всё ок
+* Проверяем, что все поды в namespace monitoring запущены командой `kubectl get pods -o wide -n monitoring` и видим, что всё ок
 
 ![4.2.png](https://github.com/Liberaty/diplom/blob/main/img/4.2.png?raw=true)
 
 2. Deploy приложения
 
-- Для деплоя нашего приложения, в папке [**k8s-configs**](https://github.com/Liberaty/diplom/blob/main/k8s-configs), создаём манифесты с помощью terraform, написав не хитрый файлик **k8s-create-configs.tf**(https://github.com/Liberaty/diplom/blob/main/infrastructure/k8s-create-configs.tf), который создаёт их по шаблонам из этой папки [**templates**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/templates):
+* Для деплоя нашего приложения, в папке [**k8s-configs**](https://github.com/Liberaty/diplom/blob/main/k8s-configs), создаём манифесты с помощью terraform, написав не хитрый файлик **k8s-create-configs.tf**(https://github.com/Liberaty/diplom/blob/main/infrastructure/k8s-create-configs.tf), который создаёт их по шаблонам из этой папки [**templates**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/templates):
 
-- 1. [**namespace.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/namespace.yaml)
-- 2. [**deployment.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/deployment.yaml)
-- 3. [**service.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/service.yaml) 
+* [**namespace.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/namespace.yaml)
+   * [**deployment.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/deployment.yaml)
+   * [**service.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/service.yaml) 
 
 ![4.3.png](https://github.com/Liberaty/diplom/blob/main/img/4.3.png?raw=true)
 
-- Теперь применим эти манифесты и теперь видим что поды запущены
+* Теперь применим эти манифесты и теперь видим что поды запущены
 
 ![4.4.png](https://github.com/Liberaty/diplom/blob/main/img/4.4.png?raw=true)
 
 3. Настройка Ingress Controller
 
-- Для того, чтобы и grafana и наше приложение работали по одному и тому же 80 порту, я установил ingress-nginx контроллер из `helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx` и запустил со следующими параметрами `helm install my-nginx-ingress-controller ingress-nginx/ingress-nginx --namespace ingress-nginx --create-namespace --set controller.hostNetwork=true --set controller.service.enabled=false`.
+* Для того, чтобы и grafana и наше приложение работали по одному и тому же 80 порту, я установил ingress-nginx контроллер из `helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx` и запустил со следующими параметрами `helm install my-nginx-ingress-controller ingress-nginx/ingress-nginx --namespace ingress-nginx --create-namespace --set controller.hostNetwork=true --set controller.service.enabled=false`.
 
 ![4.5.png](https://github.com/Liberaty/diplom/blob/main/img/4.5.png?raw=true)
 
-- Далее с помощью **Terraform**, также, создал и применил следующие манифесты
+* Далее с помощью **Terraform**, также, создал и применил следующие манифесты
 
-- - [**app-ingress.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/app-ingress.yaml)
-- - [**grafana-ingress.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/grafana-ingress.yaml)
+   * [**app-ingress.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/app-ingress.yaml)
+   * [**grafana-ingress.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/grafana-ingress.yaml)
 
-- После этого добавил в **configmap** код, указанный ниже, командой `kubectl -n monitoring edit cm kube-prometheus-grafana`:
+* После этого добавил в **configmap** код, указанный ниже, командой `kubectl -n monitoring edit cm kube-prometheus-grafana`:
 
 ```
 [server]
@@ -262,16 +262,16 @@ serve_from_sub_path = true
 
 Это нужно для корректной работы Grafana на subpath, далее перезапустил kube-prometheus-grafana командой `kubectl -n monitoring rollout restart deploy/kube-prometheus-grafana`
 
-- Убедимся, что по внешнему IP [**http://158.160.118.67/monitor**](http://158.160.118.67/monitor) открывается grafana
+* Убедимся, что по внешнему IP [**http://158.160.118.67/monitor**](http://158.160.118.67/monitor) открывается grafana
 
-- - логин: admin
-- - пароль: tower_watch
+   * Логин: admin
+   * Пароль: tower_watch
 
 Видим, что дашборды мониторинга с данными присутствуют
 
 ![4.6.png](https://github.com/Liberaty/diplom/blob/main/img/4.6.png?raw=true)
 
-- А по адресу [**http://158.160.118.67**](http://158.160.118.67) откроется наша статичная страница с приложением
+* А по адресу [**http://158.160.118.67**](http://158.160.118.67) откроется наша статичная страница с приложением
 
 ![4.7.png](https://github.com/Liberaty/diplom/blob/main/img/4.7.png?raw=true)
 
@@ -290,30 +290,30 @@ serve_from_sub_path = true
 
 1. Deploy Atlantis
 
-- Создаём манифесты с помощью terraform по шаблонам из папки [**templates**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/templates):
+* Создаём манифесты с помощью terraform по шаблонам из папки [**templates**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/templates):
 
-- 1. [**atlantis_cm.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/atlantis/atlantis_cm.yaml)
-- 2. [**atlantis_dt.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/atlantis/atlantis_dt.yaml)
-- 3. [**atlantis_ns.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/atlantis/atlantis_ns.yaml)
-- 4. [**atlantis_svc.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/atlantis/atlantis_svc.yaml)
+   * [**atlantis_cm.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/atlantis/atlantis_cm.yaml)
+   * [**atlantis_dt.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/atlantis/atlantis_dt.yaml)
+   * [**atlantis_ns.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/atlantis/atlantis_ns.yaml)
+   * [**atlantis_svc.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/atlantis/atlantis_svc.yaml)
 
-- Также опишем необходимые переменные в [**secrets.yaml.example**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/atlantis/secrets.yaml.example)
+* Также опишем необходимые переменные в [**secrets.yaml.example**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/atlantis/secrets.yaml.example)
 
-- Применяем командой `kubectl apply -f`
+* Применяем командой `kubectl apply -f`
 
 2. Webhook's
 
-- Добавим webhook в настройках нашего репозитория, где укажем в url: http://158.160.118.67:32001/events
+* Добавим webhook в настройках нашего репозитория, где укажем в url: http://158.160.118.67:32001/events
 
 ![5.1.png](https://github.com/Liberaty/diplom/blob/main/img/5.1.png?raw=true)
 
-- Проверим, что тестовый push проходит успешно
+* Проверим, что тестовый push проходит успешно
 
 ![5.2.png](https://github.com/Liberaty/diplom/blob/main/img/5.2.png?raw=true)
 
 3. Проверка Atlantis
 
-- Создаём в отдельной ветке тестовый файл test.tf с небольшими изменениями, пушим, создаём pull request и видим, что все проверки atlantis прошли успешно:
+* Создаём в отдельной ветке тестовый файл test.tf с небольшими изменениями, пушим, создаём pull request и видим, что все проверки atlantis прошли успешно:
 
 ![5.3.png](https://github.com/Liberaty/diplom/blob/main/img/5.3.png?raw=true)
 
@@ -345,54 +345,54 @@ serve_from_sub_path = true
 
 1. SA for CI/CD
 
-- Так как репозиторий находится в GitHub, было решено развернуть CI/CD систему через GitHub Actions. Создаем сервисный аккаунт, используя [**sa-cicd**](https://github.com/Liberaty/diplom/blob/main/service-accounts/sa-cicd.tf), с правами **container-registry.images.pusher** и **container-registry.images.puller**
+* Так как репозиторий находится в GitHub, было решено развернуть CI/CD систему через GitHub Actions. Создаем сервисный аккаунт, используя [**sa-cicd**](https://github.com/Liberaty/diplom/blob/main/service-accounts/sa-cicd.tf), с правами **container-registry.images.pusher** и **container-registry.images.puller**
 
 2. Workflow
 
-- Создадим в репозитории с нашим приложением [**test-nginx-app**](https://github.com/Daimero88/test-nginx-app) папку **.github**, в внутри которой, в папке **workflows** создадим 2 workflow: 
+* Создадим в репозитории с нашим приложением [**test-nginx-app**](https://github.com/Daimero88/test-nginx-app) папку **.github**, в внутри которой, в папке **workflows** создадим 2 workflow: 
 
-- - [**build.yaml**](https://github.com/Liberaty/test-app/blob/main/.github/workflows/build.yaml)
-- - [**deploy.yaml**](https://github.com/Liberaty/test-app/blob/main/.github/workflows/deploy.yaml).
+   * [**build.yaml**](https://github.com/Liberaty/test-app/blob/main/.github/workflows/build.yaml)
+   * [**deploy.yaml**](https://github.com/Liberaty/test-app/blob/main/.github/workflows/deploy.yaml).
 
-- Добавим **secrets** в настройках репозитория переменные в **Repository secrets**, содержащие:
+* Добавим **secrets** в настройках репозитория переменные в **Repository secrets**, содержащие:
 
-- - Переменная `KUBE_CONFIG` конфигурацией для подключения к кластеру k8s **~/.kube/config**
-- - Переменная `YC_REGISTRY_ID`
-- - Переменная `YC_SA_KEY` с json ключом для авторизации под сервисным аккаунтом
+   * Переменная `KUBE_CONFIG` конфигурацией для подключения к кластеру k8s **~/.kube/config**
+   * Переменная `YC_REGISTRY_ID`
+   * Переменная `YC_SA_KEY` с json ключом для авторизации под сервисным аккаунтом
 
 ![6.1.png](https://github.com/Liberaty/diplom/blob/main/img/6.1.png?raw=true)
 
 3. Build
 
-- Сделаем тестовый commit, убедимся, что наш workflow выполнился
+* Сделаем тестовый commit, убедимся, что наш workflow выполнился
 
 ![6.2.png](https://github.com/Liberaty/diplom/blob/main/img/6.2.png?raw=true)
 
-- А новый образ создался с тэгом latest в нашем YC Registry
+* А новый образ создался с тэгом latest в нашем YC Registry
 
 ![6.3.png](https://github.com/Liberaty/diplom/blob/main/img/6.3.png?raw=true)
 
 4. Deploy
 
-- Теперь добавим текст с номером версии на странице **index.html**. Создадим тэг командой `git tag v1.5.0 -m "Release version 1.5.0"`, запушим его `git push test-app v1.5.0` в наш репозиторий и раскатаем его в k8s. Убедимся, что workflow отработал
+* Теперь добавим текст с номером версии на странице **index.html**. Создадим тэг командой `git tag v1.5.0 -m "Release version 1.5.0"`, запушим его `git push test-app v1.5.0` в наш репозиторий и раскатаем его в k8s. Убедимся, что workflow отработал
 
 ![6.4.png](https://github.com/Liberaty/diplom/blob/main/img/6.4.png?raw=true)
 
-- В YC Registry создался docker образ с новым тэгом
+* В YC Registry создался docker образ с новым тэгом
 
 ![6.5.png](https://github.com/Liberaty/diplom/blob/main/img/6.5.png?raw=true)
 
-- Поды в кластере k8s используют новую версию образа нашего приложения 1.5.0
+* Поды в кластере k8s используют новую версию образа нашего приложения 1.5.0
 
 ![6.6.png](https://github.com/Liberaty/diplom/blob/main/img/6.6.png?raw=true)
 
-- Проверим, что на странице, новая версия сайта. 
+* Проверим, что на странице, новая версия сайта. 
 
-- - Было без версии:
+   * Было без версии:
 
 ![6.7.png](https://github.com/Liberaty/diplom/blob/main/img/6.7.png?raw=true)
 
-- - Стало с версией 1.5.0:
+   * Стало с версией 1.5.0:
 
 ![6.8.png](https://github.com/Liberaty/diplom/blob/main/img/6.8.png?raw=true)
 
