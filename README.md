@@ -267,7 +267,7 @@ serve_from_sub_path = true
    * Логин: admin
    * Пароль: tower_watch
 
-Видим, что дашборды мониторинга с данными присутствуют
+* Видим, что дашборды мониторинга с данными присутствуют
 
    ![4.6.png](https://github.com/Liberaty/diplom/blob/main/img/4.6.png?raw=true)
 
