@@ -62,41 +62,41 @@
 
 * Создаем сервисный аккаунт [**sa-terraform.tf**](https://github.com/Liberaty/diplom/blob/main/service-accounts/sa-terraform.tf) с правами editor. Для дальнейшей работы из под этого сервисного аккаунта понадобятся его id и ключ, их выводим в output как sensitive данные, которые можно будет затем увидеть командами ```terraform output -json service_account_keys | jq -r '.access_key'``` и ```terraform output -json service_account_keys | jq -r '.secret_key'``` . Они нам понадобятся в дальнейшем в **terraform.tfvars** файле и в **backend.hcl**
 
-![1.1.png](https://github.com/Liberaty/diplom/blob/main/img/1.1.png?raw=true)
+   ![1.1.png](https://github.com/Liberaty/diplom/blob/main/img/1.1.png?raw=true)
 
 * Убедимся, что сервисный аккаунт создан
 
-![1.2.png](https://github.com/Liberaty/diplom/blob/main/img/1.2.png?raw=true)
+   ![1.2.png](https://github.com/Liberaty/diplom/blob/main/img/1.2.png?raw=true)
 
 2. S3 хранилище
 
 * Создаём папку [**backend**](https://github.com/Liberaty/diplom/blob/main/backend), где в terraform.tfvars добавляем полученные ранее id и ключ при создании сервисного аккаунта (пример в [**terraform.tfvars.example**](https://github.com/Liberaty/diplom/blob/main/backend/terraform.tfvars.example)). В [**bucket.tf**](https://github.com/Liberaty/diplom/blob/main/backend/bucket.tf) создаем s3-bucket с именем **lepishin-tfstate** и добавляем на него права доступа явно для сервис аккаунта **terraform**
 
-![1.3.png](https://github.com/Liberaty/diplom/blob/main/img/1.3.png?raw=true)
+   ![1.3.png](https://github.com/Liberaty/diplom/blob/main/img/1.3.png?raw=true)
 
 * Так же убедимся, что S3 создан
 
-![1.4.png](https://github.com/Liberaty/diplom/blob/main/img/1.4.png?raw=true)
+   ![1.4.png](https://github.com/Liberaty/diplom/blob/main/img/1.4.png?raw=true)
 
 3. Backend
 
 * Подготавливаем директорию [**infrastructure**](https://github.com/Liberaty/diplom/blob/main/infrastructure), где в [**providers.tf**](https://github.com/Liberaty/diplom/blob/main/infrastructure/providers.tf) описываем ранее созданный бакет как бекенд для хранения стейт файла **terraform.tfstate**. Так как мы не можем использовать переменные в блоке backend "s3", то запишем значения ключей в файл **backend.hcl** (пример в [**backend.hcl.example**](https://github.com/Liberaty/diplom/blob/main/infrastructure/backend.hcl.example)), и запустим инициализацию с ключом ```terraform init -backend-config=backend.hcl``` 
 
-![1.5.png](https://github.com/Liberaty/diplom/blob/main/img/1.5.png?raw=true)
+   ![1.5.png](https://github.com/Liberaty/diplom/blob/main/img/1.5.png?raw=true)
 
 * После применения убедимся, что файл terraform.tfstate создался в нашем бакете
 
-![1.6.png](https://github.com/Liberaty/diplom/blob/main/img/1.6.png?raw=true)
+   ![1.6.png](https://github.com/Liberaty/diplom/blob/main/img/1.6.png?raw=true)
 
 4. VPC
 
 * В файле [**vpc.tf**](https://github.com/Liberaty/diplom/blob/main/infrastructure/vpc.tf) описываем создание VPC с подсетями в разных зонах доступности (ru-central1-a,ru-central1-b,ru-central1-d) и теперь применим
 
-![1.7.png](https://github.com/Liberaty/diplom/blob/main/img/1.7.png?raw=true)
+   ![1.7.png](https://github.com/Liberaty/diplom/blob/main/img/1.7.png?raw=true)
 
 * Видим, что сети созданы в различных зонах:
 
-![1.8.png](https://github.com/Liberaty/diplom/blob/main/img/1.8.png?raw=true)
+   ![1.8.png](https://github.com/Liberaty/diplom/blob/main/img/1.8.png?raw=true)
 
 ---
 ### Создание Kubernetes кластера
@@ -125,11 +125,11 @@
 
 * Описываем в [**k8s-workers.tf**](https://github.com/Liberaty/diplom/blob/main/infrastructure/k8s-workers.tf) и в [**k8s-masters.tf**](https://github.com/Liberaty/diplom/blob/main/infrastructure/k8s-masters.tf) создание виртуальных машин для master и worker нод, размещенных в ранее созданных подсетях, далее применяем
 
-![2.1.png](https://github.com/Liberaty/diplom/blob/main/img/2.1.png?raw=true)
+   ![2.1.png](https://github.com/Liberaty/diplom/blob/main/img/2.1.png?raw=true)
 
 * так же были созданы файлы [**ansible.tf**](https://github.com/Liberaty/diplom/blob/main/infrastructure/ansible.tf) и шаблон [**inventory.tftpl**](https://github.com/Liberaty/diplom/blob/main/infrastructure/templates/inventory.tftpl) для автоматической генерации [**inventory.yml**](https://github.com/Liberaty/diplom/blob/main/ansible/inventory/inventory.yml) при изменении IP адресов VM по пути ```diplom/ansible/kubespray/inventory/mycluster/inventory.ini```
 
-![2.2.png](https://github.com/Liberaty/diplom/blob/main/img/2.2.png?raw=true)
+   ![2.2.png](https://github.com/Liberaty/diplom/blob/main/img/2.2.png?raw=true)
 
 2. Подготовка к установке k8s через Kubespray
 
@@ -143,13 +143,13 @@
 
 * После запуска `ansible-playbook -i inventory/mycluster/inventory.ini cluster.yml -b -v` получаем успешный результат:
 
-![2.3.png](https://github.com/Liberaty/diplom/blob/main/img/2.3.png?raw=true)
+   ![2.3.png](https://github.com/Liberaty/diplom/blob/main/img/2.3.png?raw=true)
 
 4. Забираем `~/.kube/config` на локальную VM
 
 * Забираем файл конфигурации с сервера для подключения к кластеру `ssh cloud-user@158.160.58.191 "sudo cat /etc/kubernetes/admin.conf" > ~/.kube/config`, меняем внутри файла адрес сервера **127.0.0.1** на наш внешний IP мастера и даем на него права `chmod 600 ~/.kube/config`. После чего проверяем доступ командой `kubectl get pods -n kube-system`:
 
-![2.4.png](https://github.com/Liberaty/diplom/blob/main/img/2.4.png?raw=true)
+   ![2.4.png](https://github.com/Liberaty/diplom/blob/main/img/2.4.png?raw=true)
 
 ---
 ### Создание тестового приложения
@@ -175,7 +175,7 @@
 
 * Создадим файл [**registry.tf**](https://github.com/Liberaty/diplom/blob/main/infrastructure/regestry.tf), который создаст Yandex Container Registry.
 
-![3.1.png](https://github.com/Liberaty/diplom/blob/main/img/3.1.png?raw=true)
+   ![3.1.png](https://github.com/Liberaty/diplom/blob/main/img/3.1.png?raw=true)
 
 2. Подготовка репозитория для тестового приложения
 
@@ -191,15 +191,15 @@
 
 * Сначала соберем образ ```docker build -t cr.yandex/crpmfosr6bfe40c2vn2j/test-app:1.0.0 .``` и потом запушим его в наш **registry** ```docker push cr.yandex/crpmfosr6bfe40c2vn2j/test-app:1.0.0```
 
-![3.2.png](https://github.com/Liberaty/diplom/blob/main/img/3.2.png?raw=true)
+   ![3.2.png](https://github.com/Liberaty/diplom/blob/main/img/3.2.png?raw=true)
 
 4. Контейнер в YCR
 
 * Проверяем, что образ появился в нашем registry
 
-![3.3.png](https://github.com/Liberaty/diplom/blob/main/img/3.3.png?raw=true)
+   ![3.3.png](https://github.com/Liberaty/diplom/blob/main/img/3.3.png?raw=true)
 
-![3.4.png](https://github.com/Liberaty/diplom/blob/main/img/3.4.png?raw=true)
+   ![3.4.png](https://github.com/Liberaty/diplom/blob/main/img/3.4.png?raw=true)
 
 ---
 ### Подготовка cистемы мониторинга и деплой приложения
@@ -220,11 +220,11 @@
 
 * Добавим helm репозиторий `helm repo add prometheus-community https://prometheus-community.github.io/helm-charts`, и запустим установку командой `helm install kube-prometheus prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace`, в итоге получаем результат
 
-![4.1.png](https://github.com/Liberaty/diplom/blob/main/img/4.1.png?raw=true)
+   ![4.1.png](https://github.com/Liberaty/diplom/blob/main/img/4.1.png?raw=true)
 
 * Проверяем, что все поды в namespace monitoring запущены командой `kubectl get pods -o wide -n monitoring` и видим, что всё ок
 
-![4.2.png](https://github.com/Liberaty/diplom/blob/main/img/4.2.png?raw=true)
+   ![4.2.png](https://github.com/Liberaty/diplom/blob/main/img/4.2.png?raw=true)
 
 2. Deploy приложения
 
@@ -234,17 +234,17 @@
    * [**deployment.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/deployment.yaml)
    * [**service.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/service.yaml) 
 
-![4.3.png](https://github.com/Liberaty/diplom/blob/main/img/4.3.png?raw=true)
+   ![4.3.png](https://github.com/Liberaty/diplom/blob/main/img/4.3.png?raw=true)
 
 * Теперь применим эти манифесты и теперь видим что поды запущены
 
-![4.4.png](https://github.com/Liberaty/diplom/blob/main/img/4.4.png?raw=true)
+   ![4.4.png](https://github.com/Liberaty/diplom/blob/main/img/4.4.png?raw=true)
 
 3. Настройка Ingress Controller
 
 * Для того, чтобы и grafana и наше приложение работали по одному и тому же 80 порту, я установил ingress-nginx контроллер из `helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx` и запустил со следующими параметрами `helm install my-nginx-ingress-controller ingress-nginx/ingress-nginx --namespace ingress-nginx --create-namespace --set controller.hostNetwork=true --set controller.service.enabled=false`.
 
-![4.5.png](https://github.com/Liberaty/diplom/blob/main/img/4.5.png?raw=true)
+   ![4.5.png](https://github.com/Liberaty/diplom/blob/main/img/4.5.png?raw=true)
 
 * Далее с помощью **Terraform**, также, создал и применил следующие манифесты
 
@@ -269,11 +269,11 @@ serve_from_sub_path = true
 
 Видим, что дашборды мониторинга с данными присутствуют
 
-![4.6.png](https://github.com/Liberaty/diplom/blob/main/img/4.6.png?raw=true)
+   ![4.6.png](https://github.com/Liberaty/diplom/blob/main/img/4.6.png?raw=true)
 
 * А по адресу [**http://158.160.118.67**](http://158.160.118.67) откроется наша статичная страница с приложением
 
-![4.7.png](https://github.com/Liberaty/diplom/blob/main/img/4.7.png?raw=true)
+   ![4.7.png](https://github.com/Liberaty/diplom/blob/main/img/4.7.png?raw=true)
 
 ### Деплой инфраструктуры в terraform pipeline
 
@@ -305,23 +305,23 @@ serve_from_sub_path = true
 
 * Добавим webhook в настройках нашего репозитория, где укажем в url: http://158.160.118.67:32001/events
 
-![5.1.png](https://github.com/Liberaty/diplom/blob/main/img/5.1.png?raw=true)
+   ![5.1.png](https://github.com/Liberaty/diplom/blob/main/img/5.1.png?raw=true)
 
 * Проверим, что тестовый push проходит успешно
 
-![5.2.png](https://github.com/Liberaty/diplom/blob/main/img/5.2.png?raw=true)
+   ![5.2.png](https://github.com/Liberaty/diplom/blob/main/img/5.2.png?raw=true)
 
 3. Проверка Atlantis
 
 * Создаём в отдельной ветке тестовый файл test.tf с небольшими изменениями, пушим, создаём pull request и видим, что все проверки atlantis прошли успешно:
 
-![5.3.png](https://github.com/Liberaty/diplom/blob/main/img/5.3.png?raw=true)
+   ![5.3.png](https://github.com/Liberaty/diplom/blob/main/img/5.3.png?raw=true)
 
-![5.4.png](https://github.com/Liberaty/diplom/blob/main/img/5.4.png?raw=true)
+   ![5.4.png](https://github.com/Liberaty/diplom/blob/main/img/5.4.png?raw=true)
 
-![5.5.png](https://github.com/Liberaty/diplom/blob/main/img/5.5.png?raw=true)
+   ![5.5.png](https://github.com/Liberaty/diplom/blob/main/img/5.5.png?raw=true)
 
-![5.6.png](https://github.com/Liberaty/diplom/blob/main/img/5.6.png?raw=true)
+   ![5.6.png](https://github.com/Liberaty/diplom/blob/main/img/5.6.png?raw=true)
 
 ---
 ### Установка и настройка CI/CD
@@ -360,31 +360,31 @@ serve_from_sub_path = true
    * Переменная `YC_REGISTRY_ID`
    * Переменная `YC_SA_KEY` с json ключом для авторизации под сервисным аккаунтом
 
-![6.1.png](https://github.com/Liberaty/diplom/blob/main/img/6.1.png?raw=true)
+   ![6.1.png](https://github.com/Liberaty/diplom/blob/main/img/6.1.png?raw=true)
 
 3. Build
 
 * Сделаем тестовый commit, убедимся, что наш workflow выполнился
 
-![6.2.png](https://github.com/Liberaty/diplom/blob/main/img/6.2.png?raw=true)
+   ![6.2.png](https://github.com/Liberaty/diplom/blob/main/img/6.2.png?raw=true)
 
 * А новый образ создался с тэгом latest в нашем YC Registry
 
-![6.3.png](https://github.com/Liberaty/diplom/blob/main/img/6.3.png?raw=true)
+   ![6.3.png](https://github.com/Liberaty/diplom/blob/main/img/6.3.png?raw=true)
 
 4. Deploy
 
 * Теперь добавим текст с номером версии на странице **index.html**. Создадим тэг командой `git tag v1.5.0 -m "Release version 1.5.0"`, запушим его `git push test-app v1.5.0` в наш репозиторий и раскатаем его в k8s. Убедимся, что workflow отработал
 
-![6.4.png](https://github.com/Liberaty/diplom/blob/main/img/6.4.png?raw=true)
+   ![6.4.png](https://github.com/Liberaty/diplom/blob/main/img/6.4.png?raw=true)
 
 * В YC Registry создался docker образ с новым тэгом
 
-![6.5.png](https://github.com/Liberaty/diplom/blob/main/img/6.5.png?raw=true)
+   ![6.5.png](https://github.com/Liberaty/diplom/blob/main/img/6.5.png?raw=true)
 
 * Поды в кластере k8s используют новую версию образа нашего приложения 1.5.0
 
-![6.6.png](https://github.com/Liberaty/diplom/blob/main/img/6.6.png?raw=true)
+   ![6.6.png](https://github.com/Liberaty/diplom/blob/main/img/6.6.png?raw=true)
 
 * Проверим, что на странице, новая версия сайта. 
 
