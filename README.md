@@ -390,11 +390,11 @@ serve_from_sub_path = true
 
    * Было без версии:
 
-![6.7.png](https://github.com/Liberaty/diplom/blob/main/img/6.7.png?raw=true)
+   ![6.7.png](https://github.com/Liberaty/diplom/blob/main/img/6.7.png?raw=true)
 
    * Стало с версией 1.5.0:
 
-![6.8.png](https://github.com/Liberaty/diplom/blob/main/img/6.8.png?raw=true)
+   ![6.8.png](https://github.com/Liberaty/diplom/blob/main/img/6.8.png?raw=true)
 
 ---
 ## Что необходимо для сдачи задания?
