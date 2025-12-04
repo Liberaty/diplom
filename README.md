@@ -230,7 +230,7 @@
 
 * Для деплоя нашего приложения, в папке [**k8s-configs**](https://github.com/Liberaty/diplom/blob/main/k8s-configs), создаём манифесты с помощью terraform, написав не хитрый файлик **k8s-create-configs.tf**(https://github.com/Liberaty/diplom/blob/main/infrastructure/k8s-create-configs.tf), который создаёт их по шаблонам из этой папки [**templates**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/templates):
 
-* [**namespace.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/namespace.yaml)
+   * [**namespace.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/namespace.yaml)
    * [**deployment.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/deployment.yaml)
    * [**service.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/service.yaml) 
 
