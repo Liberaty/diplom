@@ -80,7 +80,7 @@
 
 3. Backend
 
-- Подготавливаем папку [**infrastructure**](https://github.com/Liberaty/diplom/blob/main/infrastructure), где в [**providers.tf**](https://github.com/Liberaty/diplom/blob/main/infrastructure/providers.tf) описываем ранее созданный бакет как бекенд для хранения стейт файла **terraform.tfstate**. Так как мы не можем использовать переменные в блоке backend "s3", то запишем значения ключей в файл **backend.hcl** (пример в [**backend.hcl.example**](https://github.com/Liberaty/diplom/blob/main/infrastructure/backend.hcl.example)), и запустим инициализацию с ключом ```terraform init -backend-config=backend.hcl``` 
+- Подготавливаем директорию [**infrastructure**](https://github.com/Liberaty/diplom/blob/main/infrastructure), где в [**providers.tf**](https://github.com/Liberaty/diplom/blob/main/infrastructure/providers.tf) описываем ранее созданный бакет как бекенд для хранения стейт файла **terraform.tfstate**. Так как мы не можем использовать переменные в блоке backend "s3", то запишем значения ключей в файл **backend.hcl** (пример в [**backend.hcl.example**](https://github.com/Liberaty/diplom/blob/main/infrastructure/backend.hcl.example)), и запустим инициализацию с ключом ```terraform init -backend-config=backend.hcl``` 
 
 ![1.5.png](https://github.com/Liberaty/diplom/blob/main/img/1.5.png?raw=true)
 
@@ -181,11 +181,11 @@
 
 - Создадим новый репозиторий [**test-app**](https://github.com/Liberaty/test-app), который наполним файлами:
 
-- 1. [**Dockerfile**](https://github.com/Liberaty/test-app/blob/main/Dockerfile)
+- - [**Dockerfile**](https://github.com/Liberaty/test-app/blob/main/Dockerfile)
 
-- 2. [**index.html**](https://github.com/Liberaty/test-app/blob/main/index.html)
+- - [**index.html**](https://github.com/Liberaty/test-app/blob/main/index.html)
 
-- 3. [**nginx.conf**](https://github.com/Liberaty/test-app/blob/main/nginx.conf)
+- - [**nginx.conf**](https://github.com/Liberaty/test-app/blob/main/nginx.conf)
 
 3. Docker-образ
 
@@ -246,7 +246,10 @@
 
 ![4.5.png](https://github.com/Liberaty/diplom/blob/main/img/4.5.png?raw=true)
 
-- Далее с помощью **Terraform** также создал [**app-ingress.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/app-ingress.yaml) и [**grafana-ingress.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/grafana-ingress.yaml) и применил их
+- Далее с помощью **Terraform**, также, создал и применил следующие манифесты
+
+- - [**app-ingress.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/app-ingress.yaml)
+- - [**grafana-ingress.yaml**](https://github.com/Liberaty/diplom/blob/main/k8s-configs/grafana-ingress.yaml)
 
 - После этого добавил в **configmap** код, указанный ниже, командой `kubectl -n monitoring edit cm kube-prometheus-grafana`:
 
@@ -348,14 +351,14 @@ serve_from_sub_path = true
 
 - Создадим в репозитории с нашим приложением [**test-nginx-app**](https://github.com/Daimero88/test-nginx-app) папку **.github**, в внутри которой, в папке **workflows** создадим 2 workflow: 
 
-- - 1. [**build.yaml**](https://github.com/Liberaty/test-app/blob/main/.github/workflows/build.yaml)
-- - 2. [**deploy.yaml**](https://github.com/Liberaty/test-app/blob/main/.github/workflows/deploy.yaml).
+- - [**build.yaml**](https://github.com/Liberaty/test-app/blob/main/.github/workflows/build.yaml)
+- - [**deploy.yaml**](https://github.com/Liberaty/test-app/blob/main/.github/workflows/deploy.yaml).
 
 - Добавим **secrets** в настройках репозитория переменные в **Repository secrets**, содержащие:
 
-- - 1. Переменная `KUBE_CONFIG` конфигурацией для подключения к кластеру k8s **~/.kube/config**
-- - 2. Переменная `YC_REGISTRY_ID`
-- - 3. Переменная `YC_SA_KEY` с json ключом для авторизации под сервисным аккаунтом
+- - Переменная `KUBE_CONFIG` конфигурацией для подключения к кластеру k8s **~/.kube/config**
+- - Переменная `YC_REGISTRY_ID`
+- - Переменная `YC_SA_KEY` с json ключом для авторизации под сервисным аккаунтом
 
 ![6.1.png](https://github.com/Liberaty/diplom/blob/main/img/6.1.png?raw=true)
 
