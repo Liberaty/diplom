@@ -60,7 +60,7 @@
 
 1. Сервисный аккаунт
 
-- Создаем сервисный аккаунт из папки [**service-account**](https://github.com/Liberaty/diplom/blob/main/service-account) с правами editor. Для дальнейшей работы из под этого сервисного аккаунта понадобятся его id и ключ, их выводим в output как sensitive данные, которые можно будет затем увидеть командами ```terraform output -json service_account_keys | jq -r '.access_key'``` и ```terraform output -json service_account_keys | jq -r '.secret_key'``` . Они нам понадобятся в дальнейшем в terraform.tfvars файле и в backend.hcl
+- Создаем сервисный аккаунт [**sa-terraform.tf**](https://github.com/Liberaty/diplom/blob/main/service-accounts/sa-terraform.tf) с правами editor. Для дальнейшей работы из под этого сервисного аккаунта понадобятся его id и ключ, их выводим в output как sensitive данные, которые можно будет затем увидеть командами ```terraform output -json service_account_keys | jq -r '.access_key'``` и ```terraform output -json service_account_keys | jq -r '.secret_key'``` . Они нам понадобятся в дальнейшем в **terraform.tfvars** файле и в **backend.hcl**
 
 ![1.1.png](https://github.com/Liberaty/diplom/blob/main/img/1.1.png?raw=true)
 
@@ -302,23 +302,23 @@ serve_from_sub_path = true
 
 - Добавим webhook в настройках нашего репозитория, где укажем в url: http://158.160.118.67:32001/events
 
-![5.1.png](https://github.com/Liberaty/diplom/blob/test-atlantis/img/5.1.png?raw=true)
+![5.1.png](https://github.com/Liberaty/diplom/blob/main/img/5.1.png?raw=true)
 
 - Проверим, что тестовый push проходит успешно
 
-![5.2.png](https://github.com/Liberaty/diplom/blob/test-atlantis/img/5.2.png?raw=true)
+![5.2.png](https://github.com/Liberaty/diplom/blob/main/img/5.2.png?raw=true)
 
 3. Проверка Atlantis
 
 - Создаём в отдельной ветке тестовый файл test.tf с небольшими изменениями, пушим, создаём pull request и видим, что все проверки atlantis прошли успешно:
 
-![5.3.png](https://github.com/Liberaty/diplom/blob/test-atlantis/img/5.3.png?raw=true)
+![5.3.png](https://github.com/Liberaty/diplom/blob/main/img/5.3.png?raw=true)
 
-![5.4.png](https://github.com/Liberaty/diplom/blob/test-atlantis/img/5.4.png?raw=true)
+![5.4.png](https://github.com/Liberaty/diplom/blob/main/img/5.4.png?raw=true)
 
-![5.5.png](https://github.com/Liberaty/diplom/blob/test-atlantis/img/5.5.png?raw=true)
+![5.5.png](https://github.com/Liberaty/diplom/blob/main/img/5.5.png?raw=true)
 
-![5.6.png](https://github.com/Liberaty/diplom/blob/test-atlantis/img/5.6.png?raw=true)
+![5.6.png](https://github.com/Liberaty/diplom/blob/main/img/5.6.png?raw=true)
 
 ---
 ### Установка и настройка CI/CD
@@ -340,7 +340,58 @@ serve_from_sub_path = true
 
 #### Решние "Установка и настройка CI/CD"
 
+1. SA for CI/CD
 
+- Так как репозиторий находится в GitHub, было решено развернуть CI/CD систему через GitHub Actions. Создаем сервисный аккаунт, используя [**sa-cicd**](https://github.com/Liberaty/diplom/blob/main/service-accounts/sa-cicd.tf), с правами **container-registry.images.pusher** и **container-registry.images.puller**
+
+2. Workflow
+
+- Создадим в репозитории с нашим приложением [**test-nginx-app**](https://github.com/Daimero88/test-nginx-app) папку **.github**, в внутри которой, в папке **workflows** создадим 2 workflow: 
+
+- - 1. [**build.yaml**](https://github.com/Liberaty/test-app/blob/main/.github/workflows/build.yaml)
+- - 2. [**deploy.yaml**](https://github.com/Liberaty/test-app/blob/main/.github/workflows/deploy.yaml).
+
+- Добавим **secrets** в настройках репозитория переменные в **Repository secrets**, содержащие:
+
+- - 1. Переменная `KUBE_CONFIG` конфигурацией для подключения к кластеру k8s **~/.kube/config**
+- - 2. Переменная `YC_REGISTRY_ID`
+- - 3. Переменная `YC_SA_KEY` с json ключом для авторизации под сервисным аккаунтом
+
+![6.1.png](https://github.com/Liberaty/diplom/blob/main/img/6.1.png?raw=true)
+
+3. Build
+
+- Сделаем тестовый commit, убедимся, что наш workflow выполнился
+
+![6.2.png](https://github.com/Liberaty/diplom/blob/main/img/6.2.png?raw=true)
+
+- А новый образ создался с тэгом latest в нашем YC Registry
+
+![6.3.png](https://github.com/Liberaty/diplom/blob/main/img/6.3.png?raw=true)
+
+4. Deploy
+
+- Теперь добавим текст с номером версии на странице **index.html**. Создадим тэг командой `git tag v1.5.0 -m "Release version 1.5.0"`, запушим его `git push test-app v1.5.0` в наш репозиторий и раскатаем его в k8s. Убедимся, что workflow отработал
+
+![6.4.png](https://github.com/Liberaty/diplom/blob/main/img/6.4.png?raw=true)
+
+- В YC Registry создался docker образ с новым тэгом
+
+![6.5.png](https://github.com/Liberaty/diplom/blob/main/img/6.5.png?raw=true)
+
+- Поды в кластере k8s используют новую версию образа нашего приложения 1.5.0
+
+![6.6.png](https://github.com/Liberaty/diplom/blob/main/img/6.6.png?raw=true)
+
+- Проверим, что на странице, новая версия сайта. 
+
+- - Было без версии:
+
+![6.7.png](https://github.com/Liberaty/diplom/blob/main/img/6.7.png?raw=true)
+
+- - Стало с версией 1.5.0:
+
+![6.8.png](https://github.com/Liberaty/diplom/blob/main/img/6.8.png?raw=true)
 
 ---
 ## Что необходимо для сдачи задания?
